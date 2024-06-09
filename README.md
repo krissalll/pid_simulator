@@ -1,16 +1,12 @@
-# pid
+# PID Simulator
 
-A new Flutter project.
+A PID Simulator app built on the Flutter framework
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This is a small university project that simulates a rotating actuator with inertia and friction that can be controlled by PID parameters and a desired angle. The app has a user interface and user can drag the lever to a desired offset angle and watch the system react in real time based on the given PID input.
 
-A few resources to get you started if this is your first Flutter project:
+The PID and Angle knobs can be turned by clicking and dragging up or down.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+To view source code, go inside the 'lib' directory.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
