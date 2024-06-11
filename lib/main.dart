@@ -14,10 +14,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: Colors.grey[850],
+        backgroundColor: Colors.grey[800],
         appBar: AppBar(
           title: const Text('PID Control Simulator'),
-          backgroundColor: Colors.grey[800],
+          backgroundColor: Colors.grey[700],
           foregroundColor: Colors.white.withOpacity(0.9),
         ),
         body: const PIDControlSimulator(),
@@ -41,17 +41,22 @@ class _PIDControlSimulatorState extends State<PIDControlSimulator> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        PIDKnobs(
-          onPChanged: (value) => setState(() => _p = value),
-          onIChanged: (value) => setState(() => _i = value),
-          onDChanged: (value) => setState(() => _d = value),
-          onAChanged: (value) => setState(() => _a = value),
+    return Center(
+      child: AspectRatio(
+        aspectRatio: 2 / 3,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            PIDKnobs(
+              onPChanged: (value) => setState(() => _p = value),
+              onIChanged: (value) => setState(() => _i = value),
+              onDChanged: (value) => setState(() => _d = value),
+              onAChanged: (value) => setState(() => _a = value),
+            ),
+            LeverActuator(p: _p, i: _i, d: _d, a: _a),
+          ],
         ),
-        LeverActuator(p: _p, i: _i, d: _d, a: _a),
-      ],
+      ),
     );
   }
 }
@@ -91,7 +96,7 @@ class _KnobState extends State<Knob> {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 2 / 3,
+      aspectRatio: 1 / 2,
       child: Column(
         children: [
           Expanded(
@@ -112,7 +117,7 @@ class _KnobState extends State<Knob> {
             child: FittedBox(
               child: Text(
                 widget.title,
-                style: const TextStyle(color: Colors.white60),
+                style: const TextStyle(color: Colors.white70),
               ),
             ),
           ),
@@ -120,7 +125,7 @@ class _KnobState extends State<Knob> {
             child: FittedBox(
               child: Text(
                 _value.toStringAsFixed(5),
-                style: const TextStyle(color: Colors.white38),
+                style: const TextStyle(color: Colors.white54),
               ),
             ),
           ),
@@ -141,15 +146,16 @@ class _KnobPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color = Colors.white24
+      ..color = Colors.white54
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width / 15;
+      ..strokeWidth = size.width / 10
+      ..strokeCap = StrokeCap.round;
 
     double radius = min(size.width, size.height) / 2;
     Offset center = Offset(size.width / 2, size.height / 2);
     canvas.drawCircle(center, radius, paint);
     paint.color = knobColor.withOpacity(0.5);
-    canvas.drawCircle(center, radius / 2, paint);
+    canvas.drawCircle(center, radius / 5, paint);
 
     double normalizedValue = (value - minValue) / (maxValue - minValue);
     double angle = normalizedValue * 2 * pi;
@@ -157,8 +163,8 @@ class _KnobPainter extends CustomPainter {
       center.dx + radius * cos(angle - pi / 2),
       center.dy + radius * sin(angle - pi / 2),
     );
-    paint.color = Colors.white60;
-    paint.strokeWidth = size.width / 30;
+    paint.color = Colors.white;
+    paint.strokeWidth = size.width / 10;
     canvas.drawLine(center, knobIndicator, paint);
   }
 
@@ -186,51 +192,39 @@ class PIDKnobs extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        double knobSize = constraints.maxWidth / 4;
+        // double padding = constraints.maxWidth / 4;
         return AspectRatio(
-          aspectRatio: 4 / 1,
+          aspectRatio: 3 / 1,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              SizedBox(
-                width: knobSize,
-                child: Knob(
-                  title: 'P',
-                  onValueChanged: onPChanged,
-                  min: 0,
-                  max: 0.1,
-                  knobColor: Colors.red,
-                ),
+              Knob(
+                title: 'P',
+                onValueChanged: onPChanged,
+                min: 0,
+                max: 0.1,
+                knobColor: Colors.red,
               ),
-              SizedBox(
-                width: knobSize,
-                child: Knob(
-                  title: 'I',
-                  onValueChanged: onIChanged,
-                  min: 0,
-                  max: 0.01,
-                  knobColor: Colors.green,
-                ),
+              Knob(
+                title: 'I',
+                onValueChanged: onIChanged,
+                min: 0,
+                max: 0.005,
+                knobColor: Colors.green,
               ),
-              SizedBox(
-                width: knobSize,
-                child: Knob(
-                  title: 'D',
-                  onValueChanged: onDChanged,
-                  min: 0,
-                  max: 0.1,
-                  knobColor: Colors.blue,
-                ),
+              Knob(
+                title: 'D',
+                onValueChanged: onDChanged,
+                min: 0,
+                max: 0.1,
+                knobColor: Colors.blue,
               ),
-              SizedBox(
-                width: knobSize,
-                child: Knob(
-                  title: 'Angle',
-                  onValueChanged: onAChanged,
-                  min: 0,
-                  max: 2 * pi,
-                  knobColor: Colors.white38,
-                ),
+              Knob(
+                title: 'Angle',
+                onValueChanged: onAChanged,
+                min: 0,
+                max: 2 * pi,
+                knobColor: Colors.white38,
               ),
             ],
           ),
@@ -373,14 +367,15 @@ class _LeverPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color = Colors.white38
+      ..color = Colors.white70
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width / 100;
+      ..strokeWidth = size.width / 100
+      ..strokeCap = StrokeCap.round;
 
-    Paint fillPaint = Paint()..color = Colors.black.withOpacity(0.1);
+    Paint fillPaint = Paint()..color = Colors.black.withOpacity(0.2);
 
     Offset center = Offset(size.width / 2, size.height / 2);
-    double length = min(size.width, size.height) / 3;
+    double length = min(size.width, size.height) / 2.5;
     Offset angleEnd = Offset(
       center.dx + length * cos(a),
       center.dy + length * sin(a),
@@ -394,22 +389,21 @@ class _LeverPainter extends CustomPainter {
     canvas.drawCircle(center, length * 1.1, fillPaint);
     canvas.drawCircle(center, length * 0.2, fillPaint);
     canvas.drawLine(center, leverEnd, paint);
-    paint.color = Colors.white.withOpacity(0.1);
+    paint.color = Colors.white.withOpacity(0.3);
     canvas.drawLine(center, angleEnd, paint);
 
     fillPaint.color = Colors.red;
     canvas.drawCircle(leverEnd, size.width / 40, fillPaint);
-
-    Rect rect = Rect.fromCenter(
-        center: center, width: size.width / 5, height: size.width / 5);
+    double rSize = length * 0.4;
+    Rect rect = Rect.fromCenter(center: center, width: rSize, height: rSize);
     paint.color = Colors.red;
     canvas.drawArc(rect, a, _p * 100, false, paint);
-    Rect rect2 = Rect.fromCenter(
-        center: center, width: size.width / 6, height: size.width / 6);
+    rSize += size.width / 30;
+    Rect rect2 = Rect.fromCenter(center: center, width: rSize, height: rSize);
     paint.color = Colors.green;
     canvas.drawArc(rect2, a, _i * 100, false, paint);
-    Rect rect3 = Rect.fromCenter(
-        center: center, width: size.width / 7, height: size.width / 7);
+    rSize += size.width / 30;
+    Rect rect3 = Rect.fromCenter(center: center, width: rSize, height: rSize);
     paint.color = Colors.blue;
     canvas.drawArc(rect3, a, _d * 100, false, paint);
   }
